@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: authorization
+  config:
+    import: optional:file:.env[.properties],optional:file:authorization/.env[.properties],optional:file:/app/.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${AUTHORIZATION_POSTGRES_HOST:localhost}:${AUTHORIZATION_POSTGRES_PORT:5432}/${AUTHORIZATION_POSTGRES_DB:authorizationdb}
+    username: ${AUTHORIZATION_POSTGRES_USER:authorizer}
+    password: ${AUTHORIZATION_POSTGRES_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health,info}
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+bootstrap:
+  superuser:
+    username: ${SUPERUSER_USERNAME:superuser}
+    password: ${SUPERUSER_PASSWORD:password}
+    first-name: ${SUPERUSER_FIRST_NAME:Super}
+    last-name: ${SUPERUSER_LAST_NAME:User}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

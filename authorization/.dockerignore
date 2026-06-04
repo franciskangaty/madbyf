@@ -1,0 +1,11 @@
+target/
+.git/
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+*.iml
+.env
+docker-compose*.yaml
+docker-compose*.yml
