@@ -31,13 +31,19 @@ management:
 
 bootstrap:
   superuser:
-    username: ${SUPERUSER_USERNAME:superuser}
-    password: ${SUPERUSER_PASSWORD:password}
-    first-name: ${SUPERUSER_FIRST_NAME:Super}
-    last-name: ${SUPERUSER_LAST_NAME:User}
+    username: superuser
+    password: password
+    first-name: Super
+    last-name: User
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+logging:
+   level:
+      org:
+         springframework:
+            security: debug

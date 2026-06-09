@@ -9,6 +9,8 @@ import dev.madbyf.authorization.user.domain.model.ContactType;
 import dev.madbyf.authorization.user.domain.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -101,6 +103,7 @@ public class UserController {
             @RequestParam(required = false) Boolean verified,
             @RequestParam(required = false) ContactType contactType,
             @RequestParam(required = false) String contactValue,
+            @ParameterObject
             @PageableDefault(size = 20, sort = "username") Pageable pageable
     ) {
         var criteria = new UserSearchCriteria(

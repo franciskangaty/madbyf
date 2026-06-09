@@ -9,6 +9,8 @@ import dev.madbyf.authorization.authorization.api.dto.ClientUpdateRequest;
 import dev.madbyf.authorization.authorization.domain.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -64,6 +66,7 @@ public class ClientController {
             @RequestParam(required = false) ClientAuthenticationMethodType clientAuthenticationMethod,
             @RequestParam(required = false) AuthorizationGrantTypeValue authorizationGrantType,
             @RequestParam(required = false) String scope,
+            @ParameterObject
             @PageableDefault(size = 20, sort = "clientId") Pageable pageable
     ) {
         var criteria = new ClientSearchCriteria(

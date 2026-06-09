@@ -8,6 +8,7 @@ import dev.madbyf.authorization.authorization.api.dto.ClientSearchCriteria;
 import dev.madbyf.authorization.authorization.api.dto.ClientUpdateRequest;
 import dev.madbyf.authorization.authorization.domain.model.Client;
 import dev.madbyf.authorization.authorization.domain.repository.ClientRepository;
+import dev.madbyf.authorization.authorization.domain.repository.utils.ClientSpecifications;
 import dev.madbyf.authorization.authorization.domain.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -145,14 +146,18 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional(readOnly = true)
     public Page<ClientResponse> getAll(ClientSearchCriteria criteria, Pageable pageable) {
-        return clientRepository.search(
-                trimToNull(criteria.clientId()),
-                trimToNull(criteria.clientName()),
-                criteria.clientAuthenticationMethod() == null ? null : criteria.clientAuthenticationMethod().value(),
-                criteria.authorizationGrantType() == null ? null : criteria.authorizationGrantType().value(),
-                trimToNull(criteria.scope()),
-                pageable
+        return clientRepository.findAll(
+            ClientSpecifications.search(criteria),
+            pageable
         ).map(this::toResponse);
+        // return clientRepository.search(
+        //         trimToNull(criteria.clientId()),
+        //         trimToNull(criteria.clientName()),
+        //         criteria.clientAuthenticationMethod() == null ? null : criteria.clientAuthenticationMethod().value(),
+        //         criteria.authorizationGrantType() == null ? null : criteria.authorizationGrantType().value(),
+        //         trimToNull(criteria.scope()),
+        //         pageable
+        // ).map(this::toResponse);
     }
 
     private RegisteredClient findRegisteredClient(String id) {

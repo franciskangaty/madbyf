@@ -10,8 +10,10 @@ import dev.madbyf.authorization.user.domain.model.Contact;
 import dev.madbyf.authorization.user.domain.model.User;
 import dev.madbyf.authorization.user.domain.repository.ContactRepository;
 import dev.madbyf.authorization.user.domain.repository.UserRepository;
+import dev.madbyf.authorization.user.domain.repository.utils.UserSpecifications;
 import dev.madbyf.authorization.user.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -139,17 +141,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserWithContacts> getUsers(UserSearchCriteria criteria, Pageable pageable) {
-        var users = userRepository.search(
-                trimToNull(criteria.username()),
-                trimToNull(criteria.firstName()),
-                trimToNull(criteria.lastName()),
-                normalizeRoleOrNull(criteria.role()),
-                criteria.enabled(),
-                criteria.verified(),
-                criteria.contactType(),
-                trimToNull(criteria.contactValue()),
-                pageable
+        var users = userRepository.findAll(
+            UserSpecifications.search(criteria),
+            pageable
         );
+        // var users = userRepository.search(
+        //         trimToNull(criteria.username()),
+        //         trimToNull(criteria.firstName()),
+        //         trimToNull(criteria.lastName()),
+        //         normalizeRoleOrNull(criteria.role()),
+        //         criteria.enabled(),
+        //         criteria.verified(),
+        //         criteria.contactType(),
+        //         trimToNull(criteria.contactValue()),
+        //         pageable
+        // );
         var contactsByUserId = contactsByUserId(users.getContent());
 
         return users.map(user -> toUserWithContacts(
@@ -157,6 +163,8 @@ public class UserServiceImpl implements UserService {
                 contactsByUserId.getOrDefault(user.getId(), List.of())
         ));
     }
+
+    // ======================================= UTILS ====================================================
 
     private User findUser(UUID id) {
         return userRepository.findById(id)

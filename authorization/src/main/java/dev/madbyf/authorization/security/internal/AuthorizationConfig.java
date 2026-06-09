@@ -5,6 +5,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+
+import org.springdoc.core.properties.SwaggerUiConfigProperties.Csrf;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -71,6 +73,7 @@ public class AuthorizationConfig {
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf(csrf->csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth->
                         auth
                                 .requestMatchers(PUBLIC_URL).permitAll()
@@ -116,20 +119,20 @@ public class AuthorizationConfig {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
-    @Bean
-    public org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings authorizationServerSettings() {
-        return org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings.builder()
-                .authorizationEndpoint("/api/v1/oauth2/authorize")
-                .deviceAuthorizationEndpoint("/api/v1/oauth2/device_authorization")
-                .deviceVerificationEndpoint("/api/v1/oauth2/device_verification")
-                .tokenEndpoint("/api/v1/oauth2/token")
-                .tokenIntrospectionEndpoint("/api/v1/oauth2/introspect")
-                .tokenRevocationEndpoint("/api/v1/oauth2/revoke")
-                .jwkSetEndpoint("/api/v1/oauth2/jwks")
-                .oidcLogoutEndpoint("/api/v1/connect/logout")
-                .oidcUserInfoEndpoint("/api/v1/connect/userinfo")
-                .oidcClientRegistrationEndpoint("/api/v1/connect/register")
-                .build();
-    }
+    // @Bean
+    // public org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings authorizationServerSettings() {
+    //     return org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings.builder()
+    //             .authorizationEndpoint("/api/v1/oauth2/authorize")
+    //             .deviceAuthorizationEndpoint("/api/v1/oauth2/device_authorization")
+    //             .deviceVerificationEndpoint("/api/v1/oauth2/device_verification")
+    //             .tokenEndpoint("/api/v1/oauth2/token")
+    //             .tokenIntrospectionEndpoint("/api/v1/oauth2/introspect")
+    //             .tokenRevocationEndpoint("/api/v1/oauth2/revoke")
+    //             .jwkSetEndpoint("/api/v1/oauth2/jwks")
+    //             .oidcLogoutEndpoint("/api/v1/connect/logout")
+    //             .oidcUserInfoEndpoint("/api/v1/connect/userinfo")
+    //             .oidcClientRegistrationEndpoint("/api/v1/connect/register")
+    //             .build();
+    // }
 
 }
