@@ -71,7 +71,6 @@ public class AuthorizationConfig {
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/user/register", "/api/v1/users/register"))
                 .authorizeHttpRequests(auth->
                         auth
                                 .requestMatchers(PUBLIC_URL).permitAll()
@@ -79,6 +78,7 @@ public class AuthorizationConfig {
                                 .anyRequest().authenticated()
                 )
                 .formLogin(withDefaults())
+                .httpBasic(withDefaults())
                 .build();
     }
 

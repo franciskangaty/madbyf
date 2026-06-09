@@ -1,6 +1,6 @@
 FROM eclipse-temurin:25-jdk-alpine AS build
 
-WORKDIR /workspace
+WORKDIR /build
 
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
@@ -15,7 +15,7 @@ WORKDIR /app
 
 RUN addgroup -S spring && adduser -S spring -G spring
 
-COPY --from=build /workspace/target/authorization-*.jar app.jar
+COPY --from=build /build/target/authorization-*.jar app.jar
 
 USER spring:spring
 

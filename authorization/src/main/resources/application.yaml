@@ -4,9 +4,9 @@ spring:
   config:
     import: optional:file:.env[.properties],optional:file:authorization/.env[.properties],optional:file:/app/.env[.properties]
   datasource:
-    url: jdbc:postgresql://${AUTHORIZATION_POSTGRES_HOST:localhost}:${AUTHORIZATION_POSTGRES_PORT:5432}/${AUTHORIZATION_POSTGRES_DB:authorizationdb}
-    username: ${AUTHORIZATION_POSTGRES_USER:authorizer}
-    password: ${AUTHORIZATION_POSTGRES_PASSWORD:password}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:authorizationdb}
+    username: ${POSTGRES_USER:authorizer}
+    password: ${POSTGRES_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

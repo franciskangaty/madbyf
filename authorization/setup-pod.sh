@@ -1,69 +1,59 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -e
 
-if [ ! -f .env ]; then
-    echo ".env file not found"
+# Configuration Definitions
+# POD_NAME="spring-app-pod"
+# IMAGE_NAME="localhost/spring-app:latest"
+ENV_FILE=".env"
+
+# 1. Verification Checklist
+if [ ! -f "$ENV_FILE" ]; then
+    echo "❌ Error: $ENV_FILE configuration file missing!"
     exit 1
 fi
 
-set -a
-source .env
-set +a
+if [ ! -f "Dockerfile" ]; then
+    echo "❌ Error: Dockerfile missing!"
+    exit 1
+fi
 
-echo "Removing existing pod if present..."
+# Extract and export variables temporarily to use within this script execution
+export $(grep -v '^#' "$ENV_FILE" | xargs)
 
-podman pod rm -f "$POD_NAME" 2>/dev/null || true
+# 2. Build Image
+echo "🛠️ Compiling and building fresh Podman image..."
+podman build -t "${IMAGE_NAME}" .
 
-echo "Creating volume..."
+# 3. Environment Clean-up
+echo "🔄 Tearing down existing pod structures..."
+podman pod rm -f "${POD_NAME}" 2>/dev/null || true
 
-podman volume exists postgres_data || \
-    podman volume create postgres_data
+# 4. Infrastructure Assembly
+echo "📦 Initializing Podman Pod (Exposing app port 8080 only)..."
+podman pod create --name "${POD_NAME}" -p ${AUTHORIZATION_SERVER_PORT}:8080
 
-echo "Creating pod..."
-
-podman pod create \
-    --name "$POD_NAME" \
-    -p "${AUTHORIZATION_SERVER_PORT}:8080"
-
-echo "Starting PostgreSQL..."
-
+echo "🗄️ Injecting database infrastructure container..."
 podman run -d \
-    --name "authorization-db" \
-    --pod "$POD_NAME" \
-    -e POSTGRES_DB="$AUTHORIZATION_POSTGRES_DB" \
-    -e POSTGRES_USER="$AUTHORIZATION_POSTGRES_USER" \
-    -e POSTGRES_PASSWORD="$AUTHORIZATION_POSTGRES_PASSWORD" \
-    -v postgres_data:/var/lib/postgresql/data \
-    "$DB_IMAGE"
+    --pod "${POD_NAME}" \
+    --name "${DB_CONTAINER}" \
+    --env-file "$ENV_FILE" \
+    postgres:16-alpine
 
-echo "Starting Spring Boot application..."
-
+echo "🚀 Launching Spring Boot context container..."
 podman run -d \
-    --name "authorization-app" \
-    --pod "$POD_NAME" \
-    --env-file .env \
-    "$APP_IMAGE"
+    --pod "${POD_NAME}" \
+    --name "${APP_CONTAINER}" \
+    --env-file "$ENV_FILE" \
+    -e SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/${POSTGRES_DB}" \
+    -e SPRING_DATASOURCE_USERNAME="${POSTGRES_USER}" \
+    -e SPRING_DATASOURCE_PASSWORD="${POSTGRES_PASSWORD}" \
+    "${IMAGE_NAME}"
 
-echo "Waiting for containers..."
+echo "🎉 Architecture deployment complete!"
+echo "------------------------------------------------"
+echo "Monitor Live System Logs:  podman logs -f ${POD_NAME}"
+echo "Review Running Topology:   podman pod ps"
+echo "------------------------------------------------"
 
-sleep 5
 
-echo
-echo "Pod status:"
-podman pod ps
-
-echo
-echo "Containers:"
-podman ps --pod
-
-echo
-echo "Generating Kubernetes manifest..."
-
-podman generate kube "$POD_NAME" > "$KUBE_OUTPUT"
-
-echo "Generated: $KUBE_OUTPUT"
-
-echo
-echo "Application URL:"
-echo "http://localhost:${AUTHORIZATION_SERVER_PORT}"
