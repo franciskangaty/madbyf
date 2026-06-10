@@ -1,4 +1,4 @@
-package dev.madbyf.authorization.security.internal;
+package dev.madbyf.authorization.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Profile - Authorization Server</title>
+</head>
+<body>
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">User Profile</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Personal details and application access.</p>
+        </div>
+        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-0">
+            <dl class="sm:divide-y sm:divide-gray-200 dark:sm:divide-gray-700">
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Username</dt>
+                    <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><span sec:authentication="name">User</span></dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+    
+    <div class="mt-8">
+        <form action="/logout" method="post">
+            <!-- Ensure CSRF is disabled or handled by spring security automatically for thymeleaf -->
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                Log Out
+            </button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

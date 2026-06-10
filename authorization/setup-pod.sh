@@ -38,7 +38,7 @@ podman run -d \
     --pod "${POD_NAME}" \
     --name "${DB_CONTAINER}" \
     --env-file "$ENV_FILE" \
-    postgres:16-alpine
+    postgres:alpine
 
 echo "🚀 Launching Spring Boot context container..."
 podman run -d \

@@ -1,4 +1,4 @@
-package dev.madbyf.authorization.security.internal;
+package dev.madbyf.authorization.security;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

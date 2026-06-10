@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Add Client - Authorization Server</title>
+</head>
+<body>
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Register New Client</h1>
+        
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg px-4 py-5 sm:p-6">
+            <form id="clientForm" onsubmit="event.preventDefault(); saveClient();">
+                <div id="errorMessage" class="hidden mb-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded"></div>
+                
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-3">
+                        <label for="clientId" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Client ID</label>
+                        <div class="mt-1">
+                            <input type="text" name="clientId" id="clientId" pattern="^[a-zA-Z0-9_-]{3,30}$" required class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md input-error">
+                        </div>
+                    </div>
+                    
+                    <div class="sm:col-span-3">
+                        <label for="clientName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Client Name</label>
+                        <div class="mt-1">
+                            <input type="text" name="clientName" id="clientName" required class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md input-error">
+                        </div>
+                    </div>
+                    
+                    <div class="sm:col-span-6">
+                        <label for="redirectUris" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Redirect URIs (comma-separated)</label>
+                        <div class="mt-1">
+                            <input type="text" name="redirectUris" id="redirectUris" required class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md input-error">
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-6">
+                        <label for="scopes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Scopes (comma-separated)</label>
+                        <div class="mt-1">
+                            <input type="text" name="scopes" id="scopes" required placeholder="e.g. openid,profile" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md input-error">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <a href="/clients" class="bg-white dark:bg-gray-700 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Cancel
+                    </a>
+                    <button type="submit" id="saveBtn" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function saveClient() {
+            const form = document.getElementById('clientForm');
+            if(!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const payload = {
+                clientId: form.clientId.value,
+                clientName: form.clientName.value,
+                clientAuthenticationMethods: ["client_secret_basic"],
+                authorizationGrantTypes: ["authorization_code", "client_credentials", "refresh_token"],
+                redirectUris: form.redirectUris.value.split(',').map(s => s.trim()).filter(Boolean),
+                postLogoutRedirectUris: [],
+                scopes: form.scopes.value.split(',').map(s => s.trim()).filter(Boolean),
+                requireProofKey: true,
+                requireAuthorizationConsent: true,
+                reuseRefreshTokens: true,
+                authorizationCodeTimeToLiveSeconds: 300,
+                accessTokenTimeToLiveSeconds: 3600,
+                refreshTokenTimeToLiveSeconds: 86400,
+                deviceCodeTimeToLiveSeconds: 300
+            };
+
+            const btn = document.getElementById('saveBtn');
+            const errorDiv = document.getElementById('errorMessage');
+            
+            btn.disabled = true;
+            btn.innerHTML = 'Saving...';
+            errorDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/v1/clients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    window.location.href = '/clients';
+                } else {
+                    const data = await response.json().catch(() => ({}));
+                    errorDiv.innerText = data.message || 'Failed to save client.';
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Network error occurred.';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Save';
+            }
+        }
+    </script>
+</main>
+</body>
+</html>

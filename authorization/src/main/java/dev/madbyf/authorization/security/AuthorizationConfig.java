@@ -1,4 +1,4 @@
-package dev.madbyf.authorization.security.internal;
+package dev.madbyf.authorization.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
-import org.springdoc.core.properties.SwaggerUiConfigProperties.Csrf;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -80,7 +79,11 @@ public class AuthorizationConfig {
                                 .requestMatchers("/**").hasRole("SUPERUSER")
                                 .anyRequest().authenticated()
                 )
-                .formLogin(withDefaults())
+                .formLogin(form->
+                        form
+                                .loginPage("/login")
+                                .permitAll()
+                )
                 .httpBasic(withDefaults())
                 .build();
     }
