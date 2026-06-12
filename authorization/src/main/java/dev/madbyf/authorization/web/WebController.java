@@ -39,4 +39,7 @@ public class WebController {
     public String clientForm() {
         return "client-form";
     }
+
+    @GetMapping("/ott/sent")
+    public String ottSent() { return "ott-sent"; }
 }

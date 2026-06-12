@@ -35,6 +35,7 @@ public class AuthorizationConfig {
             "/login",
             "/register",
             "/user/register",
+            "/ott/sent",
             "/api/v1/users/register",
             "/swagger-ui.html",
             "/v3/api-docs",
@@ -79,12 +80,14 @@ public class AuthorizationConfig {
                                 .requestMatchers("/**").hasRole("SUPERUSER")
                                 .anyRequest().authenticated()
                 )
-                .formLogin(form->
+                /*.formLogin(form->
                         form
                                 .loginPage("/login")
                                 .permitAll()
-                )
-                .httpBasic(withDefaults())
+                )*/
+                .formLogin(withDefaults())
+//                .httpBasic(withDefaults())
+                .oneTimeTokenLogin(withDefaults())
                 .build();
     }
 
