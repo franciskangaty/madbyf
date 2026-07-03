@@ -3,7 +3,7 @@ name: Build and Push Authorization Server
 on:
   push:
     branches:
-      - main
+      - production
     paths:
       - "authorization/**"
 
