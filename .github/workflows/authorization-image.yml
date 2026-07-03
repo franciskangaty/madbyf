@@ -36,5 +36,6 @@ jobs:
           file: ./authorization/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/authorization:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ github.sha }}
+              ${{ secrets.DOCKERHUB_USERNAME }}/authorization:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ github.sha }}
+              ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ github.ref_name }}
