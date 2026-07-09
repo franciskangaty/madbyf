@@ -1,4 +1,5 @@
-FROM eclipse-temurin:25-jdk-alpine AS build
+# Build stage
+FROM ghcr.io/graalvm/native-image-community:25 AS build
 
 WORKDIR /build
 
@@ -7,18 +8,16 @@ COPY mvnw pom.xml ./
 RUN chmod +x mvnw && ./mvnw -B -DskipTests dependency:go-offline
 
 COPY src ./src
-RUN ./mvnw -B -DskipTests package
 
-FROM eclipse-temurin:25-jre-alpine
+RUN ./mvnw -B -DskipTests -Pnative native:compile
+
+# Runtime stage
+FROM gcr.io/distroless/base-debian12:nonroot
 
 WORKDIR /app
 
-RUN addgroup -S spring && adduser -S spring -G spring
-
-COPY --from=build /build/target/authorization-*.jar app.jar
-
-USER spring:spring
+COPY --from=build /build/target/authorization /app/authorization
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["/app/authorization"]

@@ -34,3 +34,6 @@ build/
 
 ### kubenetes files
 pod.yaml
+
+### zed
+.zed/
