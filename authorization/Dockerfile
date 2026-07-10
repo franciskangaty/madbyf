@@ -9,10 +9,13 @@ RUN chmod +x mvnw && ./mvnw -B -DskipTests dependency:go-offline
 
 COPY src ./src
 
-RUN ./mvnw -B -DskipTests -Pnative native:compile
+# Build a fully static native executable
+RUN ./mvnw -B -DskipTests -Pnative \
+    -Dquarkus.native.additional-build-args=--static \
+    native:compile
 
 # Runtime stage
-FROM gcr.io/distroless/base-debian12:nonroot
+FROM scratch
 
 WORKDIR /app
 
