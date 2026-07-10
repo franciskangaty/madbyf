@@ -1,6 +1,10 @@
 {
   "reflection": [
     {
+      "type": "java.util.UUID",
+      "allDeclaredConstructors": true
+    },
+    {
       "type": "java.util.UUID[]"
     }
   ]
