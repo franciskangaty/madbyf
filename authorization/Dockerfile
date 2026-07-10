@@ -1,26 +1,32 @@
 # Build stage
 FROM ghcr.io/graalvm/native-image-community:25 AS build
 
-WORKDIR /build
+WORKDIR /workspace
 
-COPY .mvn/ .mvn/
+COPY .mvn .mvn
 COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw -B -DskipTests dependency:go-offline
+RUN chmod +x mvnw
+RUN ./mvnw -B dependency:go-offline
 
-COPY src ./src
+COPY src src
 
-# Build a fully static native executable
-RUN ./mvnw -B -DskipTests -Pnative \
-    -Dquarkus.native.additional-build-args=--static \
-    native:compile
+RUN ./mvnw -Pnative -DskipTests native:compile
 
 # Runtime stage
-FROM scratch
+FROM debian:bookworm-slim
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        zlib1g \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY --from=build /build/target/authorization /app/authorization
+COPY --from=build /workspace/target/authorization .
+
+USER 65532:65532
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/authorization"]
+ENTRYPOINT ["./authorization"]
