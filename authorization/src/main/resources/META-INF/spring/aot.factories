@@ -1,0 +1,1 @@
+org.springframework.aot.hint.runtimehintsregistrar=dev.madbyf.authorization.config.SqlResourceHints
