@@ -1,0 +1,14 @@
+[ 
+  {
+    "name": "java.util.UUID", 
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "[Ljava.util.UUID;",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "unsafeAllocated": true
+  }
+]
