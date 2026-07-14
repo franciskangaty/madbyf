@@ -1,15 +1,10 @@
 name: Build and Push Authorization Server (Test)
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - "v*"
-    paths:
-      - "authorization/**"
+  workflow_dispatch: # Allows you to run this workflow manually from GitHub's Actions tab
 
-  workflow_dispatch:
+env:
+  IMAGE_NAME: authorization-test
 
 jobs:
   docker:
@@ -19,6 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1. Setup GraalVM (Java 25) with Maven dependency caching
       - name: Setup GraalVM (Java 25)
         uses: graalvm/setup-graalvm@v1
         with:
@@ -26,14 +22,14 @@ jobs:
           distribution: 'graalvm'
           cache: 'maven'
 
+      # 2. Authenticate with Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build the native image container automatically using Buildpacks
-      # The plugin creates the image directly in the local runner daemon
+      # 3. Compile native binary and build container via Spring Boot Buildpacks
       - name: Build Native Container Image
         run: |
           cd authorization
@@ -41,12 +37,7 @@ jobs:
             -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/authorization:test \
             -DskipTests
 
-      # Tag additional variations if needed and push them to Docker Hub
-      - name: Tag and Push Images
+      # 4. Push only the single test image to Docker Hub
+      - name: Push Test Image
         run: |
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test-${{ github.sha }}
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test-${{ github.ref_name }}
-          
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test-${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/authorization:test-${{ github.ref_name }}
