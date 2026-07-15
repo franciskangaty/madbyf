@@ -22,22 +22,47 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1. Setup GraalVM (Java 25) with automatic Maven dependency caching
+      - name: Setup GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          cache: 'maven'
+
+      # 2. Determine Version Tag
+      # Uses the git tag if available; otherwise parses pom.xml to prevent unversioned builds
+      - name: Determine Image Version Tag
+        id: get_version
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            cd authorization
+            POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+            echo "version=v${POM_VERSION}" >> $GITHUB_OUTPUT
+          fi
+
+      # 3. Authenticate with Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # 4. Compile native binary and build container via Spring Boot Buildpacks
+      # This registers the image in the local runner daemon as :latest
+      - name: Build Native Container Image
+        run: |
+          cd authorization
+          ./mvnw spring-boot:build-image -Pnative \
+            -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/authorization:latest \
+            -DskipTests
 
-      - name: Build and Push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./authorization
-          file: ./authorization/Dockerfile
-          push: true
-          tags: |
-              ${{ secrets.DOCKERHUB_USERNAME }}/authorization:latest
-              ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ github.sha }}
-              ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ github.ref_name }}
+      # 5. Tag and push exactly two targets: latest and your version
+      - name: Tag and Push Production Images
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/authorization:latest ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ steps.get_version.outputs.version }}
+          
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/authorization:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/authorization:${{ steps.get_version.outputs.version }}
