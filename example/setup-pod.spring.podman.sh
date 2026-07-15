@@ -56,4 +56,3 @@ echo "Monitor Live System Logs:  podman logs -f ${POD_NAME}"
 echo "Review Running Topology:   podman pod ps"
 echo "------------------------------------------------"
 
-

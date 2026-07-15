@@ -1,6 +1,8 @@
+# this is an example for latest image build from docker hub
+
 services:
   spring:
-    build: .
+    image: madbyf/authorization:latest
     container_name: madbyf-authorization-app
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}

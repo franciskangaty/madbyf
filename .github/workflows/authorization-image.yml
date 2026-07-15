@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - production
-    tags: "v*"
+    tags:
+      - v*
     paths:
       - "authorization/**"
 

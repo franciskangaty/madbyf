@@ -14,7 +14,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+!**/.idea/
 *.iws
 *.iml
 *.ipr
@@ -30,10 +30,12 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+!**/.vscode/
 
 ### kubenetes files
 pod.yaml
 
 ### zed
-.zed/
+!**/.zed/
+
+!**/.env
