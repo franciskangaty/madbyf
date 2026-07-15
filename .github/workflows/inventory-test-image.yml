@@ -1,0 +1,43 @@
+name: Build and Push Inventory Server (Test)
+
+on:
+  workflow_dispatch: # Allows you to run this workflow manually from GitHub's Actions tab
+
+env:
+  IMAGE_NAME: inventory-test
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. Setup GraalVM (Java 25) with Maven dependency caching
+      - name: Setup GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          cache: 'maven'
+
+      # 2. Authenticate with Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3. Compile native binary and build container via Spring Boot Buildpacks
+      - name: Build Native Container Image
+        run: |
+          cd inventory
+          ./mvnw spring-boot:build-image -Pnative \
+            -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/inventory:test \
+            -DskipTests
+
+      # 4. Push only the single test image to Docker Hub
+      - name: Push Test Image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/inventory:test

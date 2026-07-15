@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: inventory
+    r2dbc:
+      url: r2dbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:inventorydb}
+    username: ${POSTGRES_USER:authorizer}
+    password: ${POSTGRES_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+    flyway:
+      enabled: true
+      url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:inventorydb}
+      username: ${POSTGRES_USER:authorizer}
+      password: ${POSTGRES_PASSWORD:password}
+      locations: classpath:db/migration
+    main:
+      web-application-type: reactive
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true

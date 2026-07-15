@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: main
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:madbyf_main}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/${POSTGRES_DB:madbyf_main}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:madbyf_main}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  # mail:
+  #   host: smtp.gmail.com
+  #   port: 587
+  #   username: your-email@gmail.com
+  #   password: your-app-password
+  #   properties:
+  #     mail:
+  #       smtp:
+  #         auth: true
+  #         starttls:
+  #           enable: true
+
+axon:
+  serializer:
+    general: jackson
+    events: jackson
+    messages: jackson
+  eventhandling:
+    processors:
+      default:
+        mode: tracking
+  axonserver:
+    enabled: false
+
+logging:
+  level:
+    '[org.flywaydb]': DEBUG
+    '[org.axonframework]': DEBUG
+    '[org.springframework.security]': DEBUG
+    '[org.springframework.boot.autoconfigure.jdbc]': DEBUG
