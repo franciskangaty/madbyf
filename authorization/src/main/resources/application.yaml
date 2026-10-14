@@ -1,17 +1,32 @@
 spring:
   application:
     name: authorization
-  config:
-    import: optional:file:.env[.properties],optional:file:authorization/.env[.properties],optional:file:/app/.env[.properties]
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:authorizationdb}
-    username: ${POSTGRES_USER:authorizer}
-    password: ${POSTGRES_PASSWORD:password}
+    url: jdbc:postgresql://localhost:5432/authorizationdb
+    username: authorizer
+    password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: false
+  # session:
+  #   # store-type: jdbc
+  #   timeout: 60m
+  #   jdbc:
+  #     initialize-schema: always
+  mail:
+    host: localhost
+    port: 587
+    username: authorizer
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: 8080
 
@@ -19,7 +34,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health,info}
+        include: health,info
   endpoint:
     health:
       probes:
@@ -36,7 +51,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
-    path: /v3/api-docs
+    path: /api-docs
 
 logging:
    level:

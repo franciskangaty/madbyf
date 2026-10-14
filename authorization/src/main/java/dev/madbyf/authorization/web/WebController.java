@@ -20,10 +20,10 @@ public class WebController {
         return "profile";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
+    // @GetMapping("/login")
+    // public String login() {
+    //     return "login";
+    // }
 
     @GetMapping("/clients")
     public String clients() {

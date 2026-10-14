@@ -1,6 +1,6 @@
 package dev.madbyf.authorization.user.domain.model;
 
-import dev.madbyf.authorization.security.BaseEntity;
+import dev.madbyf.authorization.config.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

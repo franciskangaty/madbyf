@@ -1,6 +1,7 @@
 package dev.madbyf.authorization.user.domain.model;
 
-import dev.madbyf.authorization.security.BaseEntity;
+import dev.madbyf.authorization.config.AuditingEntity;
+import dev.madbyf.authorization.config.BaseEntity;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;

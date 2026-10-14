@@ -1,0 +1,7 @@
+package dev.madbyf.auth.user.util;
+
+public enum RegistrationStep {
+        STARTED, FRAUD_CHECK, USERNAME_RESERVATION, USERNAME_ASSIGNMENT,
+        CONTACT_ADD, CONTACT_VERIFICATION_TIMEOUT,
+        ACCOUNT_CREATION, ROLE_ASSIGNMENT
+}
