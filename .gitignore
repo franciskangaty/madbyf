@@ -1,0 +1,132 @@
+# Environment files
+.env
+.env.*
+**/.env
+**/.env.*
+
+# VS Code
+.vscode/
+**/.vscode/
+
+# JetBrains IDEs (IntelliJ, WebStorm, PhpStorm, PyCharm)
+.idea/
+**/.idea/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*.swn
+*.un~
+
+# Emacs
+*~
+\#*\#
+
+# Visual Studio
+.vs/
+**/.vs/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/private/
+
+# Fleet
+.fleet/
+
+# Cursor
+.cursor/
+**/.cursor/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Maven
+target/
+**/target/
+
+# Gradle
+.gradle/
+**/.gradle/
+build/
+**/build/
+
+# Java compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Spring Boot generated files
+spring-boot-devtools.properties
+
+# Flutter generated directories
+.dart_tool/
+**/.dart_tool/
+
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Flutter build output
+build/
+**/build/
+
+# Generated plugin registrants
+.flutter-plugins
+**/.flutter-plugins
+.flutter-plugins-dependencies
+**/.flutter-plugins-dependencies
+
+# Dart generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Flutter IDE metadata
+.flutter-idea/
+
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# TanStack Start generated files
+.output/
+**/.output/
+
+# Vite
+.vite/
+**/.vite/
+
+# Build artifacts
+dist/
+**/dist/
+
+# TypeScript generated files
+*.tsbuildinfo
+
+# Framework generated directories
+.tanstack/
+**/.tanstack/
+
+# Test and coverage
+coverage/
+**/coverage/
+
+# Package manager caches
+.npm/
+.pnpm-store/
+.yarn/cache/
